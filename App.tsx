@@ -7,6 +7,8 @@ import ThemeSwitcher from './components/ThemeSwitcher';
 import Card from './components/Card';
 import Button from './components/Button';
 import MappingModal from './components/MappingModal';
+import InfoModal from './components/InfoModal';
+import Footer from './components/Footer';
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState<Theme>(THEMES[0]);
@@ -32,6 +34,7 @@ const App: React.FC = () => {
   const [encodedText, setEncodedText] = useState(() => encodeText(initialPlainText));
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   
   // Removed useEffect hooks for auto-syncing to restore manual control
@@ -222,7 +225,10 @@ const App: React.FC = () => {
         </Card>
       </main>
       
+      <Footer onOpenInfo={() => setIsInfoModalOpen(true)} />
+
       <MappingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} charMap={cipherMaps.charMap} />
+      <InfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} />
     </div>
   );
 };
