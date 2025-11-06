@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { THEMES } from './constants';
@@ -23,8 +22,7 @@ const App: React.FC = () => {
   }, [cipherMaps]);
 
   const decodeText = useCallback((text: string) => {
-    return text
-      .split('')
+    return Array.from(text)
       .map(emoji => cipherMaps.emojiMap[emoji] || emoji)
       .join('');
   }, [cipherMaps]);
@@ -35,6 +33,8 @@ const App: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
+  
+  // Removed useEffect hooks for auto-syncing to restore manual control
 
   useEffect(() => {
     const root = document.documentElement;
@@ -48,20 +48,18 @@ const App: React.FC = () => {
     root.style.setProperty('--secondary-hover-color', theme.colors.secondaryHover);
   }, [theme]);
 
-  const handlePlainTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPlainText(e.target.value);
-  };
-  
-  const handleEncodedTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setEncodedText(e.target.value);
-  };
-
   const handleEncode = () => {
     setEncodedText(encodeText(plainText));
   };
-  
+
   const handleDecode = () => {
     setPlainText(decodeText(encodedText));
+  };
+  
+  const handleSwap = () => {
+      const temp = plainText;
+      setPlainText(encodedText);
+      setEncodedText(temp);
   };
 
   const handleTranslate = async () => {
@@ -152,7 +150,7 @@ const App: React.FC = () => {
       
       <ThemeSwitcher themes={THEMES} activeTheme={theme} setTheme={setTheme} />
 
-      <main className="w-full max-w-2xl mx-auto space-y-6 mt-8">
+      <main className="w-full max-w-2xl mx-auto space-y-4 mt-8">
         <Card>
           <label htmlFor="passphrase" className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary-color)' }}>Passphrase (ঐচ্ছিক)</label>
           <input
@@ -172,7 +170,7 @@ const App: React.FC = () => {
           <textarea
             id="plain-text"
             value={plainText}
-            onChange={handlePlainTextChange}
+            onChange={(e) => setPlainText(e.target.value)}
             onKeyDown={handleKeyDown}
             rows={4}
             className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-base focus:ring-2 focus:outline-none"
@@ -188,12 +186,27 @@ const App: React.FC = () => {
           </div>
         </Card>
 
+        <div className="flex justify-center my-0">
+          <button 
+              onClick={handleSwap} 
+              className="p-3 rounded-full transition-all duration-200 ease-in-out hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-color)]" 
+              style={{ backgroundColor: 'var(--secondary-color)', '--tw-ring-color': 'var(--primary-color)' } as React.CSSProperties}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--secondary-hover-color)'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--secondary-color)'}
+              aria-label="Swap text and emoji"
+          >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 17l-4 4-4-4m8-10l-4-4-4 4" />
+              </svg>
+          </button>
+        </div>
+
         <Card>
           <label htmlFor="encoded-text" className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary-color)' }}>Encoded Emoji (ইমোজি)</label>
           <textarea
             id="encoded-text"
             value={encodedText}
-            onChange={handleEncodedTextChange}
+            onChange={(e) => setEncodedText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Encoded emoji appears here..."
             rows={4}
