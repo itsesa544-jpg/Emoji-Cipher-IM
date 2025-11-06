@@ -1,13 +1,13 @@
 import React from 'react';
-import { CHAR_MAP } from '../constants';
 import Card from './Card';
 
 interface MappingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  charMap: { [key: string]: string };
 }
 
-const MappingModal: React.FC<MappingModalProps> = ({ isOpen, onClose }) => {
+const MappingModal: React.FC<MappingModalProps> = ({ isOpen, onClose, charMap }) => {
   if (!isOpen) return null;
 
   return (
@@ -21,9 +21,9 @@ const MappingModal: React.FC<MappingModalProps> = ({ isOpen, onClose }) => {
           <button onClick={onClose} className="text-2xl font-bold">&times;</button>
         </div>
         <div className="grid grid-cols-4 sm:grid-cols-6 gap-4 max-h-96 overflow-y-auto pr-2">
-          {Object.entries(CHAR_MAP).map(([char, emoji]) => (
+          {Object.entries(charMap).map(([char, emoji]) => (
             <div key={char} className="text-center p-2 rounded" style={{backgroundColor: 'var(--secondary-color)'}}>
-              <div className="font-mono text-lg">{char === ' ' ? '" "' : char}</div>
+              <div className="font-mono text-lg">{char === ' ' ? '" "' : char === '\n' ? '"\\n"' : char === '\t' ? '"\\t"' : char}</div>
               <div className="text-2xl">{emoji}</div>
             </div>
           ))}
