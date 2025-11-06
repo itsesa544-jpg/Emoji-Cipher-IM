@@ -1,0 +1,5 @@
+{
+  "name": "Emoji Cipher",
+  "description": "An application to encode and decode text into emojis using a passphrase-based cipher, with an optional AI-powered translation feature.",
+  "requestFramePermissions": []
+}
